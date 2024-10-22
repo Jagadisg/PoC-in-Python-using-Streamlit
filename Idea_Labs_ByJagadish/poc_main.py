@@ -43,15 +43,11 @@ async def vedio_conversion(video_file):
     """
             
     new_directory_path = await create_directory()    
-    logger.error(new_directory_path)
     temp_video_path = await save_uploaded_file(video_file,new_directory_path)
     st.video(video_file) 
-    print(temp_video_path)
     # Step 2: Extract audio from the video
     with st.spinner("Extracting audio from the video..."):
         temp_audio_path, duration = await extract_audio_from_video(temp_video_path)
-        ai_audio = AudioSegment.from_wav(temp_audio_path)
-        logger.error(ai_audio)
         st.success("Audio extracted successfully.")
 
     # Step 3: Transcribe the audio using AssemblyAI
@@ -68,23 +64,17 @@ async def vedio_conversion(video_file):
     # Step 5: Convert corrected text to speech
     if corrected_text:
         with st.spinner("Converting text to speech..."):
-            logger.info(corrected_text)            
             ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
-            st.error(ai_audio_path)          
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
                 ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
-                logger.info(ai_audio_output_path)
                 await insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_output_path)
-                ai_audio_path = ai_audio_output_path
-            # Step 6: Merge AI-generated audio with the original video
+                new_video_path = await merge_audio_video(ai_audio_output_path, temp_video_path)
             with st.spinner("Merging AI-generated audio with video..."):
                 new_video_path = await merge_audio_video(ai_audio_path, temp_video_path)
-
-            
     
     # Clean up temporary files
-    # await cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
+    await cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
 
 
 async def save_uploaded_file(uploaded_file,folderpath):
@@ -118,7 +108,6 @@ async def extract_audio_from_video(video_path):
         video_clip = mp.VideoFileClip(video_path)
         audio_clip = video_clip.audio
         og_audio_path = f"{os.path.splitext(video_path)[0]}{random.randint(10,99)}og_audio.wav"
-        print(f"{og_audio_path} {'-'*20}")
         audio_clip.write_audiofile(og_audio_path, logger=None)
         duration_seconds = audio_clip.duration
         video_clip.close()
@@ -219,7 +208,6 @@ async def text_to_speech(text: str, video_path: str) -> str:
         str: The file path of the AI-generated audio.
     """
     try:
-        # Load the original audio from the video
         original_audio, sr = librosa.load(video_path)
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
 
