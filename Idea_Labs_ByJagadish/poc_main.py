@@ -209,6 +209,7 @@ def text_to_speech(text,video_path):
     Args:
         text (str): The text (convert to speech).
     
+    ]
     Returns:
         str: The file path of ai_audio
     """
@@ -226,6 +227,7 @@ def text_to_speech(text,video_path):
         print("here")
         return ai_audio_path
     except Exception as e:
+        st.error(e)
         print(e)
         logger.error(f"Text-to-speech conversion failed: {str(e)}")
         st.error("Error in text-to-speech conversion.")
