@@ -1,0 +1,8 @@
+streamlit
+moviepy
+assemblyai
+pyttsx3
+loguru
+python-dotenv
+librosa
+pydub
