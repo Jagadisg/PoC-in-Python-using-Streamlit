@@ -1,5 +1,9 @@
+from pydub.utils import which
 from pydub import AudioSegment
 from pydub.silence import detect_silence
+
+AudioSegment.ffmpeg = which("ffmpeg")
+
 
 async def insert_silences_into_ai_audio(original_audio_path, ai_audio_path, audio_output_filepath):
 
