@@ -11,7 +11,7 @@ import streamlit as st
 from pathlib import Path
 from loguru import logger
 import moviepy.editor as mp
-
+from pydub import AudioSegment
 from utils.helper_utils import filepath_name
 from utils.audio_sync_utils import insert_silences_into_ai_audio
 
@@ -46,6 +46,8 @@ async def vedio_conversion(video_file):
     Path(directory).mkdir(parents=True, exist_ok=True)
     
     temp_video_path = await save_uploaded_file(video_file)
+    original_audio = AudioSegment.from_file(temp_video_path)
+    logger.error(original_audio)
     # a, sr = librosa.load(temp_video_path)
     # logger.info(a)
     # logger.info(sr)
