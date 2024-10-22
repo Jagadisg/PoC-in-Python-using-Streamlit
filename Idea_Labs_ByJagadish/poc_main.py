@@ -3,6 +3,7 @@ import requests
 from dotenv import load_dotenv
 
 import random
+import asyncio
 import librosa
 import pyttsx3
 import assemblyai as aai
@@ -18,7 +19,7 @@ from utils.audio_sync_utils import insert_silences_into_ai_audio
 load_dotenv()
 
 
-def main():
+async def main():
     """
     Main purpose to manage the Streamlit application. lets the user upload a video file, extract the audio, transcribing it, then use Azure OpenAI GPT-4 to generate text-to--speech audio from the corrected text, so merging the corrected AI-generated audio back with the original video.     
     """    
@@ -29,10 +30,10 @@ def main():
     video_file = st.file_uploader("Upload a video file", type=["mp4", "mov", "avi", "mkv"])
     
     if video_file is not None:
-        vedio_conversion(video_file)
+        await vedio_conversion(video_file)
 
 
-def vedio_conversion(video_file):
+async def vedio_conversion(video_file):
     """
     Handles the video conversion steps including audio extraction, transcribing, 
     text correction, text to ai speech, and merging the AI audio into the video.
@@ -44,48 +45,46 @@ def vedio_conversion(video_file):
     directory = "uploads"
     Path(directory).mkdir(parents=True, exist_ok=True)
     
-    temp_video_path = save_uploaded_file(video_file)
+    temp_video_path = await save_uploaded_file(video_file)
     st.video(video_file) 
     print(temp_video_path)
     # Step 2: Extract audio from the video
     with st.spinner("Extracting audio from the video..."):
-        temp_audio_path, duration = extract_audio_from_video(temp_video_path)
+        temp_audio_path, duration = await extract_audio_from_video(temp_video_path)
         st.success("Audio extracted successfully.")
 
     # Step 3: Transcribe the audio using AssemblyAI
     with st.spinner("Transcribing audio..."):
-        transcribed_segments1, combined_text = transcribe_audio(temp_audio_path)
+        transcribed_segments1, combined_text = await transcribe_audio(temp_audio_path)
         if duration <= 30:
-            combined_text = add_space_by_segment(segments=transcribed_segments1)
+            combined_text = await add_space_by_segment(segments=transcribed_segments1)
 
     # Step 4: Text correction using Azure OpenAI
     if combined_text:
         with st.spinner("Correcting the transcribed text..."):
-            corrected_text = correct_text_using_gpt(combined_text)
+            corrected_text = await correct_text_using_gpt(combined_text)
              
     # Step 5: Convert corrected text to speech
     if corrected_text:
         with st.spinner("Converting text to speech..."):
-            ai_audio_path = text_to_speech(corrected_text,temp_video_path)            
+            logger.info()
+            ai_audio_path = await text_to_speech(corrected_text,temp_video_path)            
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
-                audio, sr = librosa.load(ai_audio_path)
-                logger.info(audio)
-                logger.info(sr)
                 ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
-                insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_output_path)
+                await insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_output_path)
                 ai_audio_path = ai_audio_output_path
             # Step 6: Merge AI-generated audio with the original video
             with st.spinner("Merging AI-generated audio with video..."):
-                new_video_path = merge_audio_video(ai_audio_path, temp_video_path)
+                new_video_path = await merge_audio_video(ai_audio_path, temp_video_path)
 
             
     
     # Clean up temporary files
-    cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
+    await cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
 
 
-def save_uploaded_file(uploaded_file):
+async def save_uploaded_file(uploaded_file):
     """
     Save the uploaded file.
 
@@ -102,7 +101,7 @@ def save_uploaded_file(uploaded_file):
     return save_path
 
 
-def extract_audio_from_video(video_path):
+async def extract_audio_from_video(video_path):
     """
     Extract audio from the input vedio file
 
@@ -127,7 +126,7 @@ def extract_audio_from_video(video_path):
         return None
 
 
-def transcribe_audio(audio_path):
+async def transcribe_audio(audio_path):
     """
     Uses AssemblyAI API to transcribe the given audio file and create segments.
     
@@ -167,7 +166,7 @@ def transcribe_audio(audio_path):
 
 
 
-def correct_text_using_gpt(transcribed_text):
+async def correct_text_using_gpt(transcribed_text):
     """
     Sends the transcribed text to Azure OpenAI for text correction.
 
@@ -205,7 +204,7 @@ def correct_text_using_gpt(transcribed_text):
         return None
 
 
-def text_to_speech(text,video_path):
+async def text_to_speech(text,video_path):
     """
     Runs the given text through pyttsx3 text-to--speech engine.
     
@@ -237,7 +236,7 @@ def text_to_speech(text,video_path):
         return None
 
 
-def merge_audio_video(new_audio_path, video_path):
+async def merge_audio_video(new_audio_path, video_path):
     """
     Combines the original video file with the artificial intelligence produced audio.
     
@@ -265,7 +264,7 @@ def merge_audio_video(new_audio_path, video_path):
         st.error("Failed to merge audio and video.")
 
 
-def add_space_by_segment(combined_text:str="",segments:list = None) -> str:
+async def add_space_by_segment(combined_text:str="",segments:list = None) -> str:
     '''
     Adding the extra space by calculating the current end and start of next segment (where 0.1 second equals to one space)
     
@@ -290,7 +289,7 @@ def add_space_by_segment(combined_text:str="",segments:list = None) -> str:
         st.error("Error in adding space functionality")
     return combined_text
 
-def cleanup_files(file_paths):
+async def cleanup_files(file_paths):
     """
     Deletes temporary files used during the conversion.
 
@@ -308,4 +307,4 @@ def cleanup_files(file_paths):
 
 if __name__ == "__main__":
     
-    main()
+    asyncio.run(main())

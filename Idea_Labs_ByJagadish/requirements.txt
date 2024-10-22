@@ -2,7 +2,7 @@ streamlit
 moviepy
 assemblyai
 pyttsx3
-loguru
+loguru==0.7.2
 python-dotenv
 librosa
 pydub==0.25.1
