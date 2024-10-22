@@ -222,8 +222,7 @@ async def text_to_speech(text,video_path):
     try:
         logger.info("text to")
         original_audio, sr = librosa.load(video_path)
-        logger.info(original_audio,sr)
-        logger.info("speech")
+        logger.info(sr)
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
         logger.info("stemp")
         logger.info("1")
