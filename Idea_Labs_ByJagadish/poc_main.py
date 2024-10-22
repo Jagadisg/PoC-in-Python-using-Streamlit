@@ -68,8 +68,9 @@ async def vedio_conversion(video_file):
                 ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
                 await insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_output_path)
                 new_video_path = await merge_audio_video(ai_audio_output_path, temp_video_path)
-            with st.spinner("Merging AI-generated audio with video..."):
-                new_video_path = await merge_audio_video(ai_audio_path, temp_video_path)
+            else:
+                with st.spinner("Merging AI-generated audio with video..."):                    
+                    new_video_path = await merge_audio_video(ai_audio_path, temp_video_path)
     
     # Clean up temporary files
     await cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
