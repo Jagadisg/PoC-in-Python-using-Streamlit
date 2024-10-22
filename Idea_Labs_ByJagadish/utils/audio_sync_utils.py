@@ -8,10 +8,10 @@ async def insert_silences_into_ai_audio(original_audio_path, ai_audio_path, audi
 
     uploads_dir = Path(__file__).parent / 'uploads'
     ai_audio_path = Path(ai_audio_path).name
-    original_audio = Path(original_audio).name
+    original_audio_path = Path(original_audio_path).name
     ai_audio_path = uploads_dir / ai_audio_path    
-    original_audio = uploads_dir / original_audio
-    original_audio = AudioSegment.from_file(original_audio)
+    original_audio_path = uploads_dir / original_audio_path
+    original_audio = AudioSegment.from_file(original_audio_path)
     ai_audio = AudioSegment.from_wav(ai_audio_path)
     
     silence_ranges_original = detect_silence(original_audio, min_silence_len=500, silence_thresh=-40)
