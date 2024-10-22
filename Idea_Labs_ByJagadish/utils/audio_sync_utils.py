@@ -7,7 +7,7 @@ from pydub.silence import detect_silence
 
 async def insert_silences_into_ai_audio(original_audio_path, ai_audio_path, audio_output_filepath):
 
-    uploads_dir = Path(__file__).parent / 'uploads'
+    uploads_dir = Path(__file__).parent.parent / 'uploads'
     logger.info(f"{os.listdir(uploads_dir)}")
     ai_audio_full_path = uploads_dir / Path(ai_audio_path).name
     original_audio_full_path = uploads_dir / Path(original_audio_path).name
