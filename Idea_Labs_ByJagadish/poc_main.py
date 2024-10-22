@@ -68,17 +68,8 @@ async def vedio_conversion(video_file):
     # Step 5: Convert corrected text to speech
     if corrected_text:
         with st.spinner("Converting text to speech..."):
-            logger.info(corrected_text)
-            engine = pyttsx3.init()
-            engine.setProperty('rate', 150)  # Set speech rate
-            audio_file = f"temp_ai_audio.wav"
-            engine.save_to_file(combined_text, audio_file)
-            engine.runAndWait()
-            # ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
-            uploads_dir = Path(__file__).parent / 'uploads'
-            logger.info(os.listdir(uploads_dir))
-            org = AudioSegment.from_wav(audio_file)
-            logger.error(org)
+            logger.info(corrected_text)            
+            ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
             st.error(ai_audio_path)          
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
@@ -234,28 +225,10 @@ async def text_to_speech(text: str, video_path: str) -> str:
 
         engine = pyttsx3.init()
         engine.setProperty('rate', tempo)
-
-        # Define uploads directory and ensure it exists
-        uploads_dir = Path(__file__).parent / 'uploads'
-        uploads_dir.mkdir(parents=True, exist_ok=True)
-
-        # Construct full path for AI audio filename
-        ai_audio_filename = uploads_dir / f"{os.path.splitext(Path(video_path).name)[0]}_{random.randint(10, 99)}_ai_audio.wav"
-
-        # Save the text-to-speech audio to the specified path
-        logger.info(f"Saving AI audio to: {ai_audio_filename}")
-        engine.save_to_file(text, str(ai_audio_filename))  # Ensure it's a string for pyttsx3
+        ai_audio_path = "temp_ai_audio.wav"
+        engine.save_to_file(text, ai_audio_path)
         engine.runAndWait()
-
-        # Check if the file was created successfully
-        if ai_audio_filename.exists():
-            logger.info(f"AI audio successfully saved at: {ai_audio_filename}")
-            ai_audio = AudioSegment.from_wav(str(ai_audio_filename))
-            return str(ai_audio_filename)
-        else:
-            logger.error(f"Failed to create AI audio file at: {ai_audio_filename}")
-            return None
-
+        return ai_audio_path
     except Exception as e:
         logger.error(f"Text-to-speech conversion failed: {str(e)}")
         return None
