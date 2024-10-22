@@ -69,6 +69,9 @@ def vedio_conversion(video_file):
             ai_audio_path = text_to_speech(corrected_text,temp_video_path)            
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
+                audio, sr = librosa.load(ai_audio_path)
+                logger.info(audio)
+                logger.info(sr)
                 ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
                 insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_output_path)
                 ai_audio_path = ai_audio_output_path
@@ -154,8 +157,8 @@ def transcribe_audio(audio_path):
                 segments[-1]['end'] = word.end / 1000.0
                 segments[-1]['text'] += ' ' + word.text
                 combined_text += word.text + " "
-        print(segments)
-        print(combined_text)
+        logger.info(segments)
+        logger.info(combined_text)
         return segments, combined_text
 
     except Exception as e:
@@ -216,7 +219,7 @@ def text_to_speech(text,video_path):
     try:
         original_audio, sr = librosa.load(video_path)
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
-        print("1")
+        logger.info("1")
         engine = pyttsx3.init()
         engine.setProperty('rate', tempo)
         print('2')
