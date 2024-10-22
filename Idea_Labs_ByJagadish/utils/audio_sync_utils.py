@@ -1,4 +1,3 @@
-from pydub.utils import which
 from pydub import AudioSegment
 from pydub.silence import detect_silence
 
