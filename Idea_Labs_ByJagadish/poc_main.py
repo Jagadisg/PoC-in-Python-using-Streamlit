@@ -82,7 +82,7 @@ async def vedio_conversion(video_file):
             
     
     # Clean up temporary files
-    await cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
+    # await cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
 
 
 async def save_uploaded_file(uploaded_file):
