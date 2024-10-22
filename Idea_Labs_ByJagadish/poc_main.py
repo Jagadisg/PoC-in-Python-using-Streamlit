@@ -46,6 +46,9 @@ async def vedio_conversion(video_file):
     Path(directory).mkdir(parents=True, exist_ok=True)
     
     temp_video_path = await save_uploaded_file(video_file)
+    a, sr = librosa.load(temp_video_path)
+    logger.info(a)
+    logger.info(sr)
     st.video(video_file) 
     print(temp_video_path)
     # Step 2: Extract audio from the video
