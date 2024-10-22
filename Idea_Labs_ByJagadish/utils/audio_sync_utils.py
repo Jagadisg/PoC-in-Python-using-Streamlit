@@ -1,4 +1,5 @@
 import os
+from loguru import logger
 from pathlib import Path
 from pydub import AudioSegment
 from pydub.silence import detect_silence
@@ -9,7 +10,8 @@ async def insert_silences_into_ai_audio(original_audio_path, ai_audio_path, audi
     uploads_dir = Path(__file__).parent / 'uploads'
     ai_audio_full_path = uploads_dir / Path(ai_audio_path).name
     original_audio_full_path = uploads_dir / Path(original_audio_path).name
-    
+    logger.info(ai_audio_full_path)
+    logger.info(original_audio_full_path)
     original_audio = AudioSegment.from_file(original_audio_full_path)
     ai_audio = AudioSegment.from_wav(ai_audio_full_path)
     
