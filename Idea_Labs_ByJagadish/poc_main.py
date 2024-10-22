@@ -76,7 +76,7 @@ async def vedio_conversion(video_file):
             logger.info(corrected_text)
             ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
             st.error(ai_audio_path)          
-            uploads_dir = Path(__file__).parent
+            uploads_dir = Path(__file__).parent.parent
             logger.info(os.listdir(uploads_dir))
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
