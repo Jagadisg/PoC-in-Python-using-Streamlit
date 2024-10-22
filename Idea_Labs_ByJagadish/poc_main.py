@@ -234,8 +234,7 @@ async def text_to_speech(text,video_path):
         engine.save_to_file(text, ai_audio_path)
         engine.runAndWait()
         uploads_dir = Path(__file__).resolve().parent.parent / 'uploads'
-        # Ensure the directory exists
-        uploads_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(uploads_dir)
         ai_audio_path = uploads_dir / ai_audio_pathi
         logger.info(f"AI audio will be saved at: {ai_audio_path}")
         return ai_audio_pathi
