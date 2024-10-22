@@ -214,34 +214,53 @@ async def correct_text_using_gpt(transcribed_text):
         return None
 
 
-async def text_to_speech(text,video_path):
+async def text_to_speech(text, video_path):
     """
-    Runs the given text through pyttsx3 text-to--speech engine.
+    Runs the given text through pyttsx3 text-to-speech engine.
     
     Args:
-        text (str): The text (convert to speech).
+        text (str): The text to convert to speech.
+        video_path (str): The path to the video file.
     
-    ]
     Returns:
-        str: The file path of ai_audio
+        str: The file path of the AI-generated audio.
     """
     try:
+        # Load the original audio from the video
         original_audio, sr = librosa.load(video_path)
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
+
+        # Initialize pyttsx3 engine and set the speech rate to match the audio tempo
         engine = pyttsx3.init()
         engine.setProperty('rate', tempo)
-        ai_audio_pathi = f"{os.path.splitext(video_path)[0]}{random.randint(10,99)}ai_audio.wav"
-        engine.save_to_file(text, ai_audio_path)
-        engine.runAndWait()
+
+        # Generate a random name for the ai_audio.wav file
+        ai_audio_filename = f"{os.path.splitext(os.path.basename(video_path))[0]}{random.randint(10, 99)}ai_audio.wav"
+
+        # Resolve the uploads directory
         uploads_dir = Path(__file__).resolve().parent.parent / 'uploads'
-        logger.info(uploads_dir)
-        ai_audio_path = uploads_dir / ai_audio_pathi
+
+        # Ensure the uploads directory exists
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Construct the full path for ai_audio.wav
+        ai_audio_path = uploads_dir / ai_audio_filename
+        
+        # Log the path where the file will be saved
         logger.info(f"AI audio will be saved at: {ai_audio_path}")
-        return ai_audio_pathi
+
+        # Save the text-to-speech audio to the specified path
+        engine.save_to_file(text, str(ai_audio_path))  # Note: ensure the path is a string for pyttsx3
+        engine.runAndWait()
+
+        # Return the full path of the AI-generated audio
+        return str(ai_audio_path)
+
     except Exception as e:
         logger.error(f"Text-to-speech conversion failed: {str(e)}")
         st.error("Error in text-to-speech conversion.")
         return None
+
 
 
 async def merge_audio_video(new_audio_path, video_path):
