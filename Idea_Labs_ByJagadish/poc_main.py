@@ -252,7 +252,8 @@ async def text_to_speech(text, video_path):
         # Save the text-to-speech audio to the specified path
         engine.save_to_file(text, str(ai_audio_path))  # Note: ensure the path is a string for pyttsx3
         engine.runAndWait()
-
+        ai_audio = AudioSegment.from_wav(ai_audio_path)
+        logger.info(ai_audio)
         # Return the full path of the AI-generated audio
         return str(ai_audio_path)
 
