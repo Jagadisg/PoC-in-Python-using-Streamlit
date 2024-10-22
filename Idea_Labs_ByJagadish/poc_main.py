@@ -242,10 +242,8 @@ async def text_to_speech(text, video_path):
 
         # Save the text-to-speech audio to the specified path
         logger.info(ai_audio_filename)
-        engine.save_to_file(text, str(ai_audio_filename))  # Note: ensure the path is a string for pyttsx3
+        engine.save_to_file(text, ai_audio_filename)  # Note: ensure the path is a string for pyttsx3
         engine.runAndWait()
-        dir = Path(__file__)
-        print(os.listdir(dir))
         dir = Path(__file__).parent
         print(os.listdir(dir))
         dir = Path(__file__).parent.parent
