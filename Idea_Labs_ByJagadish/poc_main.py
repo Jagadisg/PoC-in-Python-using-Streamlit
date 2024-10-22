@@ -226,24 +226,20 @@ async def text_to_speech(text,video_path):
         str: The file path of ai_audio
     """
     try:
-        logger.info("text to")
         original_audio, sr = librosa.load(video_path)
-        logger.info(sr)
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
-        logger.info("stemp")
-        logger.info("1")
         engine = pyttsx3.init()
         engine.setProperty('rate', tempo)
-        print('2')
-        ai_audio_path = f"{os.path.splitext(video_path)[0]}{random.randint(10,99)}ai_audio.wav"
+        ai_audio_pathi = f"{os.path.splitext(video_path)[0]}{random.randint(10,99)}ai_audio.wav"
         engine.save_to_file(text, ai_audio_path)
-        print('3')
         engine.runAndWait()
-        print("here")
-        return ai_audio_path
+        uploads_dir = Path(__file__).resolve().parent.parent / 'uploads'
+        # Ensure the directory exists
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        ai_audio_path = uploads_dir / ai_audio_pathi
+        logger.info(f"AI audio will be saved at: {ai_audio_path}")
+        return ai_audio_pathi
     except Exception as e:
-        st.error(e)
-        logger.error(e)
         logger.error(f"Text-to-speech conversion failed: {str(e)}")
         st.error("Error in text-to-speech conversion.")
         return None
