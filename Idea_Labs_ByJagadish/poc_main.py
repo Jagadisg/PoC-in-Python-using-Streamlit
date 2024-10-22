@@ -69,9 +69,16 @@ async def vedio_conversion(video_file):
     if corrected_text:
         with st.spinner("Converting text to speech..."):
             logger.info(corrected_text)
-            ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
+            engine = pyttsx3.init()
+            engine.setProperty('rate', 150)  # Set speech rate
+            audio_file = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_ai_audio.wav"
+            engine.save_to_file(combined_text, audio_file)
+            engine.runAndWait()
+            # ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
+            org = AudioSegment.from_wav(audio_file)
+            logger.error(org)
             st.error(ai_audio_path)          
-            uploads_dir = Path(__file__).parent.parent
+            uploads_dir = Path(__file__).parent / 'uploads'
             logger.info(os.listdir(uploads_dir))
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
