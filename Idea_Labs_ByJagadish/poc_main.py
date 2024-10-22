@@ -44,6 +44,8 @@ async def vedio_conversion(video_file):
     
     directory = "uploads"
     Path(directory).mkdir(parents=True, exist_ok=True)
+    uploads_dir = Path(__file__).parent
+    logger.info(os.listdir(uploads_dir))
     
     temp_video_path = await save_uploaded_file(video_file)
     original_audio = AudioSegment.from_file(temp_video_path)
