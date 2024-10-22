@@ -95,7 +95,7 @@ async def save_uploaded_file(uploaded_file):
     Returns:
         str: Path to the saved file.
     """
-    save_path = filepath_name(uploaded_file=uploaded_file)        
+    save_path = await filepath_name(uploaded_file=uploaded_file)        
     with open(save_path, "wb") as f:
         f.write(uploaded_file.read())
     return save_path
