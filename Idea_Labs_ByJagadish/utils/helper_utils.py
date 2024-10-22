@@ -15,7 +15,7 @@ async def filepath_name(uploaded_file=None,folder_path=None,filename=None):
 
 async def create_directory():
     logger.info("en6ede")
-    current_directory = Path(__file__) 
+    current_directory = Path(__file__).parent.parent 
     new_directory_path = os.path.join(current_directory, 'uploads')
 
     if not os.path.exists(new_directory_path):
