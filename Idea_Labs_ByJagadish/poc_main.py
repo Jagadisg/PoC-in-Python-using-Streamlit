@@ -8,10 +8,8 @@ import librosa
 import pyttsx3
 import assemblyai as aai
 import streamlit as st
-from pathlib import Path
 from loguru import logger
 import moviepy.editor as mp
-from pydub import AudioSegment
 from utils.helper_utils import filepath_name, create_directory
 from utils.audio_sync_utils import insert_silences_into_ai_audio
 

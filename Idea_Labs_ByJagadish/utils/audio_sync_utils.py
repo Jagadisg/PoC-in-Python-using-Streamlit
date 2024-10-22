@@ -1,6 +1,3 @@
-import os
-from loguru import logger
-from pathlib import Path
 from pydub import AudioSegment
 from pydub.silence import detect_silence
 
@@ -11,10 +8,7 @@ async def insert_silences_into_ai_audio(original_audio_path, ai_audio_path, audi
     ai_audio = AudioSegment.from_wav(ai_audio_path)
     
     silence_ranges_original = detect_silence(original_audio, min_silence_len=500, silence_thresh=-40)
-    silence_ranges_ai = detect_silence(ai_audio, min_silence_len=500, silence_thresh=-40)
-    
-    print(f"Original audio silence ranges: {silence_ranges_original}")
-    print(f"AI audio silence ranges: {silence_ranges_ai}")
+    silence_ranges_ai = detect_silence(ai_audio, min_silence_len=500, silence_thresh=-40)    
     
     time_offset = 0
     
