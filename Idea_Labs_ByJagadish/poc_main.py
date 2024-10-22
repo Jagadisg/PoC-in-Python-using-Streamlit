@@ -217,8 +217,11 @@ async def text_to_speech(text,video_path):
         str: The file path of ai_audio
     """
     try:
+        logger.info("text to")
         original_audio, sr = librosa.load(video_path)
+        logger.info("speech")
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
+        logger.info("stemp")
         logger.info("1")
         engine = pyttsx3.init()
         engine.setProperty('rate', tempo)
@@ -238,6 +241,7 @@ async def text_to_speech(text,video_path):
 
 
 async def merge_audio_video(new_audio_path, video_path):
+    
     """
     Combines the original video file with the artificial intelligence produced audio.
     
