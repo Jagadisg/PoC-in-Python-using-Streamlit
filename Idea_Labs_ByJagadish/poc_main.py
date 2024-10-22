@@ -42,8 +42,9 @@ async def vedio_conversion(video_file):
         video_file: Uploaded video file.
     """
             
-    temp_video_path = await save_uploaded_file(video_file)
-    await create_directory()    
+    new_directory_path = await create_directory()    
+    logger.error(new_directory_path)
+    temp_video_path = await save_uploaded_file(video_file,new_directory_path)
     st.video(video_file) 
     print(temp_video_path)
     # Step 2: Extract audio from the video
@@ -88,7 +89,7 @@ async def vedio_conversion(video_file):
     # await cleanup_files([temp_video_path,temp_audio_path,ai_audio_path,ai_audio_path,ai_audio_path,new_video_path])
 
 
-async def save_uploaded_file(uploaded_file):
+async def save_uploaded_file(uploaded_file,folderpath):
     """
     Save the uploaded file.
 
@@ -99,7 +100,7 @@ async def save_uploaded_file(uploaded_file):
     Returns:
         str: Path to the saved file.
     """
-    save_path = await filepath_name(uploaded_file=uploaded_file)        
+    save_path = await filepath_name(uploaded_file=uploaded_file,folder_path=folderpath)        
     with open(save_path, "wb") as f:
         f.write(uploaded_file.read())
     return save_path
