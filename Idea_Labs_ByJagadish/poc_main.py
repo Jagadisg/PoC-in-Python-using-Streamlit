@@ -43,10 +43,7 @@ async def vedio_conversion(video_file):
     """
     
     directory = "uploads"
-    Path(directory).mkdir(parents=True, exist_ok=True)
-    uploads_dir = Path(__file__).parent
-    logger.info(os.listdir(uploads_dir))
-    
+    Path(directory).mkdir(parents=True, exist_ok=True)        
     temp_video_path = await save_uploaded_file(video_file)
     original_audio = AudioSegment.from_file(temp_video_path)
     logger.error(original_audio)
@@ -79,6 +76,8 @@ async def vedio_conversion(video_file):
             logger.info(corrected_text)
             ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
             st.error(ai_audio_path)          
+            uploads_dir = Path(__file__).parent
+            logger.info(os.listdir(uploads_dir))
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
                 ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
