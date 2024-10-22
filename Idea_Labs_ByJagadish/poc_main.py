@@ -67,7 +67,9 @@ async def vedio_conversion(video_file):
     # Step 5: Convert corrected text to speech
     if corrected_text:
         with st.spinner("Converting text to speech..."):
-            ai_audio_path = await text_to_speech(corrected_text,temp_video_path)            
+            logger.info(corrected_text)
+            ai_audio_path = await text_to_speech(corrected_text,temp_video_path)  
+            st.error(ai_audio_path)          
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
                 ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
@@ -160,7 +162,7 @@ async def transcribe_audio(audio_path):
         return segments, combined_text
 
     except Exception as e:
-        print(f"Transcription failed: {str(e)}")
+        logger.error(f"Transcription failed: {str(e)}")
         return []
 
 
@@ -191,7 +193,7 @@ async def correct_text_using_gpt(transcribed_text):
         response = requests.post(azure_endpoint, headers=headers, json=data)
         if response.status_code == 200:
             result = response.json()
-            print(result["choices"][0]["message"]["content"].strip())
+            logger.info(result["choices"][0]["message"]["content"].strip())
             return result["choices"][0]["message"]["content"].strip()
         else:
             logger.error(f"GPT-4 API error: {response.status_code} - {response.text}")
@@ -229,7 +231,7 @@ async def text_to_speech(text,video_path):
         return ai_audio_path
     except Exception as e:
         st.error(e)
-        print(e)
+        logger.error(e)
         logger.error(f"Text-to-speech conversion failed: {str(e)}")
         st.error("Error in text-to-speech conversion.")
         return None
