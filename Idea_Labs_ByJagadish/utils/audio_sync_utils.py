@@ -1,9 +1,14 @@
+import os
+from loguru import logger
 from pydub import AudioSegment
 from pydub.silence import detect_silence
 
 
 async def insert_silences_into_ai_audio(original_audio_path, ai_audio_path, audio_output_filepath):
 
+    if not os.path.exists(original_audio_path):
+        logger.error(f"Original audio file not found: {original_audio_path}")
+        
     original_audio = AudioSegment.from_file(original_audio_path)
     ai_audio = AudioSegment.from_wav(ai_audio_path)
     

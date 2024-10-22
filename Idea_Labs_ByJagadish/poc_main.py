@@ -76,6 +76,7 @@ async def vedio_conversion(video_file):
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
                 ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
+                logger.info(ai_audio_output_path)
                 await insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_output_path)
                 ai_audio_path = ai_audio_output_path
             # Step 6: Merge AI-generated audio with the original video
