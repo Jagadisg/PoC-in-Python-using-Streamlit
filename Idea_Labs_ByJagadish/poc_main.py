@@ -69,8 +69,9 @@ def vedio_conversion(video_file):
             ai_audio_path = text_to_speech(corrected_text,temp_video_path)            
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
-                ai_audio_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
-                insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_path)
+                ai_audio_output_path = f"{os.path.splitext(temp_video_path)[0]}{random.randint(10,99)}_final_audio.wav"
+                insert_silences_into_ai_audio(temp_audio_path,ai_audio_path,ai_audio_output_path)
+                ai_audio_path = ai_audio_output_path
             # Step 6: Merge AI-generated audio with the original video
             with st.spinner("Merging AI-generated audio with video..."):
                 new_video_path = merge_audio_video(ai_audio_path, temp_video_path)
@@ -214,13 +215,18 @@ def text_to_speech(text,video_path):
     try:
         original_audio, sr = librosa.load(video_path)
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
+        print("1")
         engine = pyttsx3.init()
         engine.setProperty('rate', tempo)
+        print('2')
         ai_audio_path = f"{os.path.splitext(video_path)[0]}{random.randint(10,99)}ai_audio.wav"
         engine.save_to_file(text, ai_audio_path)
+        print('3')
         engine.runAndWait()
+        print("here")
         return ai_audio_path
     except Exception as e:
+        print(e)
         logger.error(f"Text-to-speech conversion failed: {str(e)}")
         st.error("Error in text-to-speech conversion.")
         return None
