@@ -12,7 +12,7 @@ from pathlib import Path
 from loguru import logger
 import moviepy.editor as mp
 from pydub import AudioSegment
-from utils.helper_utils import filepath_name
+from utils.helper_utils import filepath_name, create_directory
 from utils.audio_sync_utils import insert_silences_into_ai_audio
 
 
@@ -41,15 +41,9 @@ async def vedio_conversion(video_file):
     Args:
         video_file: Uploaded video file.
     """
-    
-    directory = "uploads"
-    Path(directory).mkdir(parents=True, exist_ok=True)        
+            
     temp_video_path = await save_uploaded_file(video_file)
-    original_audio = AudioSegment.from_file(temp_video_path)
-    logger.error(original_audio)
-    # a, sr = librosa.load(temp_video_path)
-    # logger.info(a)
-    # logger.info(sr)
+    await create_directory()    
     st.video(video_file) 
     print(temp_video_path)
     # Step 2: Extract audio from the video
@@ -230,32 +224,28 @@ async def text_to_speech(text, video_path):
         original_audio, sr = librosa.load(video_path)
         tempo, _ = librosa.beat.beat_track(y=original_audio, sr=sr)
 
-        # Initialize pyttsx3 engine and set the speech rate to match the audio tempo
         engine = pyttsx3.init()
         engine.setProperty('rate', tempo)
-
-        # Generate a random name for the ai_audio.wav file
-        ai_audio_filename = f"{os.path.splitext(os.path.basename(video_path))[0]}{random.randint(10, 99)}ai_audio.wav"
-
-        # Resolve the uploads directory
-        uploads_dir = Path(__file__).resolve().parent.parent / 'uploads'
-
-        # Ensure the uploads directory exists
-        uploads_dir.mkdir(parents=True, exist_ok=True)
         
-        # Construct the full path for ai_audio.wav
-        ai_audio_path = uploads_dir / ai_audio_filename
+        ai_audio_filename = f"{os.path.splitext(video_path)[0]}{random.randint(10, 99)}ai_audio.wav"
         
-        # Log the path where the file will be saved
-        logger.info(f"AI audio will be saved at: {ai_audio_path}")
+        # uploads_dir = Path(__file__).parent / 'uploads'
+
+        # uploads_dir.mkdir(parents=True, exist_ok=True)
+        
+        # # Construct the full path for ai_audio.wav
+        # ai_audio_path = uploads_dir / ai_audio_filename
+        
+        # # Log the path where the file will be saved
+        # logger.info(f"AI audio will be saved at: {ai_audio_path}")
 
         # Save the text-to-speech audio to the specified path
-        engine.save_to_file(text, str(ai_audio_path))  # Note: ensure the path is a string for pyttsx3
+        engine.save_to_file(text, str(ai_audio_filename))  # Note: ensure the path is a string for pyttsx3
         engine.runAndWait()
-        ai_audio = AudioSegment.from_wav(ai_audio_path)
+        ai_audio = AudioSegment.from_wav(ai_audio_filename)
         logger.info(ai_audio)
         # Return the full path of the AI-generated audio
-        return str(ai_audio_path)
+        return str(ai_audio_filename)
 
     except Exception as e:
         logger.error(f"Text-to-speech conversion failed: {str(e)}")
