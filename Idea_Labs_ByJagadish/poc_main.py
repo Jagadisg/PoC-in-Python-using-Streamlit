@@ -56,6 +56,8 @@ async def vedio_conversion(video_file):
     # Step 2: Extract audio from the video
     with st.spinner("Extracting audio from the video..."):
         temp_audio_path, duration = await extract_audio_from_video(temp_video_path)
+        ai_audio = AudioSegment.from_wav(temp_audio_path)
+        logger.error(ai_audio)
         st.success("Audio extracted successfully.")
 
     # Step 3: Transcribe the audio using AssemblyAI
