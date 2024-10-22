@@ -67,7 +67,6 @@ async def vedio_conversion(video_file):
     # Step 5: Convert corrected text to speech
     if corrected_text:
         with st.spinner("Converting text to speech..."):
-            logger.info()
             ai_audio_path = await text_to_speech(corrected_text,temp_video_path)            
             st.success("Text-to-speech conversion completed.")
             if duration > 30:
